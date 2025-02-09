@@ -22,4 +22,5 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) -r $(OBJDIR) $(EXECUTABLE)
+	@if exist $(OBJDIR) rmdir /s /q $(OBJDIR)
+	@if exist $(EXECUTABLE).exe del $(EXECUTABLE).exe
