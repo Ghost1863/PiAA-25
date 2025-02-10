@@ -32,10 +32,9 @@ int main() {
         Desk smallAnswer = backtracking(smallDesk);
         desk = scaleSolution(smallAnswer, factors.second);
     } else {
-        Desk answer = backtracking(desk);
-        desk = answer;
+        desk = backtracking(desk);
     }
-    std::cout<<desk;
+    //std::cout<<desk;
     std::cout << "Time to complete: " << (double)(clock() - start) / CLOCKS_PER_SEC << std::endl;
     std::cout << desk.getSquareCount() << std::endl;
     for (auto elem : desk.getSquareList()) {

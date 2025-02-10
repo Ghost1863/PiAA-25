@@ -9,18 +9,17 @@ Desk backtracking(Desk desk) {
     int currentIteration = 1, operationCounter = 0; // инициализация счетчиков для количества операций и итераций
 
     while (!queue.front().isFull()) {
-        std::cout << currentIteration << " " << "iteration\n";
+        //std::cout << currentIteration << " " << "iteration\n";
         Desk s = queue.front(); // создаем копию первого стола из очереди для взаимодействия
         std::pair<int, int> emptyCell = s.emptyCell(); // находим свободную клетку на столе
         for (int i = desk.getDeskSize() - 1; i > 0; i--) {
          // пытаемся поставить квадрат на место пустой клетки, начинаем попытки от наибольшего возможного варианта
-            Desk cur = s;
             if (s.canAdd(emptyCell.first, emptyCell.second, i)) { // проверка возможности поставить квадрат в стол
+                Desk cur = s;
                 cur.addSquare(i, emptyCell.first, emptyCell.second, cur.getSquareCount());
-                std::cout << "Current step\n" << cur << std::endl;
+                //std::cout << "Current step\n" << cur << std::endl;
                 if (cur.isFull()) { // в случае, если мы полностью заполнили стол, мы возвращаем полученный итог
                     std::cout << "operation count: " << operationCounter << std::endl;
-                    std::cout<<queue.size()<<" size\n";
                     return cur;
                 }
                 queue.push(cur); // если стол был заполнен не до конца, полученный этап решения кладем в конец очереди и идем дальше
