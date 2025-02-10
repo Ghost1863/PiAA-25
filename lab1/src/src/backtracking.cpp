@@ -1,21 +1,24 @@
 #include "backtracking.hpp"
 
 Desk backtracking(Desk desk) {
-    if(isPrime(desk.getDeskSize())){
+    int n=desk.getDeskSize();
+
+    if(isPrime(n)){
         desk.addSquaresForPrimeSizes();
     }
-    std::queue<Desk> queue; // кладем исходный стол в очередь
-    queue.push(desk);
+    
+    std::queue<Desk> queue; 
+    queue.push(desk); // кладем исходный стол в очередь
     int currentIteration = 1, operationCounter = 0; // инициализация счетчиков для количества операций и итераций
 
     while (!queue.front().isFull()) {
         //std::cout << currentIteration << " " << "iteration\n";
-        Desk s = queue.front(); // создаем копию первого стола из очереди для взаимодействия
-        std::pair<int, int> emptyCell = s.emptyCell(); // находим свободную клетку на столе
-        for (int i = desk.getDeskSize() - 1; i > 0; i--) {
+        Desk frontDesk = queue.front(); // создаем копию первого стола из очереди для взаимодействия
+        std::pair<int, int> emptyCell = frontDesk.emptyCell(); // находим свободную клетку на столе
+        for (int i = n - 1; i > 0; i--) {
          // пытаемся поставить квадрат на место пустой клетки, начинаем попытки от наибольшего возможного варианта
-            if (s.canAdd(emptyCell.first, emptyCell.second, i)) { // проверка возможности поставить квадрат в стол
-                Desk cur = s;
+            if (frontDesk.canAdd(emptyCell.first, emptyCell.second, i)) { // проверка возможности поставить квадрат в стол
+                Desk cur = frontDesk;
                 cur.addSquare(i, emptyCell.first, emptyCell.second, cur.getSquareCount());
                 //std::cout << "Current step\n" << cur << std::endl;
                 if (cur.isFull()) { // в случае, если мы полностью заполнили стол, мы возвращаем полученный итог
@@ -30,7 +33,6 @@ Desk backtracking(Desk desk) {
         // т.к. мы либо добавили в очередь все возможные дальнейшие расстановки на данном этапе, либо полностью его заполнили
         currentIteration++;
     }
-    std::cout << "operation count: " << operationCounter << std::endl;
     return queue.front();
 }
 
