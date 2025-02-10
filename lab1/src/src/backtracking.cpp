@@ -31,7 +31,6 @@ Desk backtracking(Desk desk) {
         // т.к. мы либо добавили в очередь все возможные дальнейшие расстановки на данном этапе, либо полностью его заполнили
         currentIteration++;
     }
-    std::cout<<queue.size()<<" size\n";
     std::cout << "operation count: " << operationCounter << std::endl;
     return queue.front();
 }

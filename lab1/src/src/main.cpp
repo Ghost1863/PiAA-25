@@ -35,7 +35,7 @@ int main() {
         Desk answer = backtracking(desk);
         desk = answer;
     }
-
+    std::cout<<desk;
     std::cout << "Time to complete: " << (double)(clock() - start) / CLOCKS_PER_SEC << std::endl;
     std::cout << desk.getSquareCount() << std::endl;
     for (auto elem : desk.getSquareList()) {
