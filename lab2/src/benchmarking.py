@@ -19,7 +19,7 @@ def test_algorithm(matrix_sizes, num_tests_per_size):
             j_index = [j for j in range(size)]
 
             start_time = time.time()
-            #ADO_MOD_algorithm(matrix).find_res(1)
+            ADO_MOD_algorithm(matrix).find_res(1)
             #little_algo.method_Little(matrix, {}, 0, i_index, j_index)
             end_time = time.time()
 
@@ -50,8 +50,8 @@ def plot_results(results):
     plt.show()
 
 if __name__ == '__main__':
-    matrix_sizes = range(2, 20)  # Размеры матриц от 2 до 19
-    num_tests_per_size = 50  # Количество тестов для каждого размера матрицы
+    matrix_sizes = range(2, 20)
+    num_tests_per_size = 50
 
     results = test_algorithm(matrix_sizes, num_tests_per_size)
     plot_results(results)

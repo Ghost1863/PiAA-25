@@ -1,5 +1,5 @@
 import copy
-import math
+from math import inf
 import time
 from MatrixCreator import MatrixCreator
 from MatrixHandler import MatrixHandler
@@ -10,7 +10,7 @@ class LittleAlgorithm:
     def __init__(self, matrix:list[list[int]])->None:
         self.matrix_handler = MatrixHandler(matrix)
         self.best_solution = {}
-        self.min_cost = math.inf
+        self.min_cost = inf
         self.tree_data = []
 
     def answer(self, start: int) -> list[int]:
@@ -28,7 +28,7 @@ class LittleAlgorithm:
         matrix_rows = []
         for i, row in enumerate(self.matrix_handler.matrix):
             row_str = f"{i_index[i]+1:2} | " + " | ".join(
-                f"{'∞' if x == math.inf else x:2}" for x in row
+                f"{'∞' if x == inf else x:2}" for x in row
             ) + " |"
             matrix_rows.append(row_str)
 
@@ -47,7 +47,7 @@ class LittleAlgorithm:
     def handle2x2(self, tmp_solution: dict, current_cost: int, i_index: list[int], j_index: list[int]) -> None:
         for i in range(len(self.matrix_handler)):
             for j in range(len(self.matrix_handler)):
-                if self.matrix_handler[i][j] == math.inf:
+                if self.matrix_handler[i][j] == inf:
                     # Вершина (i + 1) % 2 связывается с вершиной j (другая вершина в столбце).
                     tmp_solution[i_index[(i + 1) % 2] + 1] = j_index[j] + 1
                     # Вершина i связывается с вершиной (j + 1) % 2 (другая вершина в строке).
@@ -95,29 +95,7 @@ class LittleAlgorithm:
                            branching_arc=(i_index[i] + 1, j_index[j] + 1))
 
         print("Начата правая ветвь:")
-        matrix[i][j] = math.inf
+        matrix[i][j] = inf
         self.method_Little(matrix, tmp_solution, current_cost, i_index[:], j_index[:], node_id,
                            branching_arc=(i_index[i] + 1, j_index[j] + 1))
-
-if __name__ == '__main__':
-    start = 1
-    a = [
-        [math.inf, 25, 40, 31, 27],
-        [5, math.inf, 17, 30, 25],
-        [19, 15, math.inf, 6, 1],
-        [9, 50, 24, math.inf, 6],
-        [22, 8, 7, 10, math.inf]
-    ]
-    #a=MatrixCreator.load_matrix(a,'matrix.txt')
-    a=MatrixCreator().generate_matrix(0,5,10,20,)
-    b = copy.deepcopy(a)
-    little_algo = LittleAlgorithm(a)
-    i_index = [i for i in range(len(a))]
-    j_index = [j for j in range(len(a))]
-    little_algo.method_Little(a, {}, 0, i_index, j_index)
-    print("Лучший путь:", little_algo.answer(start))
-    print("Минимальная стоимость:", little_algo.min_cost)
-    Visualiser().visualise_solution_tree(little_algo.tree_data)
-    Visualiser().visualise_graph(b,little_algo.answer(start))
-
 

@@ -1,8 +1,9 @@
 from graphviz import Digraph
-import math
+from math import inf
+
 
 class Visualiser:
-    def visualise_graph(self,adj_matrix, highlight_nodes=None):
+    def visualise_graph(self,matrix, highlight_nodes=None):
         if highlight_nodes is None:
             highlight_nodes = []
 
@@ -16,19 +17,19 @@ class Visualiser:
         dot.attr()
 
         # Добавление вершин
-        for i in range(len(adj_matrix)):
+        for i in range(len(matrix)):
             dot.node(str(i + 1), str(i + 1),style="filled",fillcolor="green")
 
         # Добавление рёбер
-        for i in range(len(adj_matrix)):
-            for j in range(len(adj_matrix[i])):
-                if adj_matrix[i][j] != math.inf:
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                if matrix[i][j] != inf:
                     if (i + 1, j + 1) in highlight_edges:
-                        dot.edge(str(i + 1), str(j + 1), label=str(adj_matrix[i][j]), color="red", penwidth="2.0")
+                        dot.edge(str(i + 1), str(j + 1), label=str(matrix[i][j]), color="red", penwidth="2.0")
                     else:
-                        dot.edge(str(i + 1), str(j + 1), label=str(adj_matrix[i][j]))
-
+                        dot.edge(str(i + 1), str(j + 1), label=str(matrix[i][j]))
         dot.render('images/salesman_way', format='png', cleanup=True)
+
 
     def visualise_solution_tree(self,tree_data):
         graph = Digraph()

@@ -51,7 +51,7 @@ class MatrixCreator:
                     # Вычисление евклидова расстояния между точками i и j
                     distance = math.sqrt(sum((points[i][k] - points[j][k]) ** 2 for k in range(dimensions)))
                     matrix[i][j] = int(distance)
-                    matrix[j][i] = int(distance) # Матрица симметрична
+                    matrix[j][i] = int(distance)
 
         return matrix
 
@@ -61,10 +61,3 @@ class MatrixCreator:
             string = ' '.join([str(x) for x in elem])
             f.write(string+'\n')
         f.close()
-
-if __name__ == '__main__':
-    #matrix=MatrixCreator().generate_matrix(False,5,2,11)
-    #MatrixCreator().save_matrix(matrix,"matr.txt")
-    matrix=MatrixCreator().load_matrix("matr.txt")
-    print(matrix)
-

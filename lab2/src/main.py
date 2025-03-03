@@ -12,10 +12,11 @@ class Menu:
 
     def display_menu(self):
         print("1. Создать матрицу")
-        print("2. Загрузить матрицу")
-        print("3. Сохранить матрицу")
-        print("4. Выбрать алгоритм (ADO_MOD или Литтла)")
-        print("5. Выход")
+        print("2. Создать евклидову матрицу")
+        print("3. Загрузить матрицу")
+        print("4. Сохранить матрицу")
+        print("5. Выбрать алгоритм (ADO_MOD или Литтла)")
+        print("6. Выход")
 
     def create_matrix(self):
         sym = input("Симметричная матрица? (y/n): ").lower() == 'y'
@@ -26,8 +27,16 @@ class Menu:
         print("Матрица создана:")
         self.print_matrix()
 
+    def create_euclidian_matrix(self):
+        size = int(input("Введите размер матрицы: "))
+        min_val = int(input("Введите минимальное значение: "))
+        max_val = int(input("Введите максимальное значение: "))
+        self.src_matrix = self.matrix_creator.generate_euclidean_matrix(size=size,min_val=min_val,max_val=max_val)
+        print("Матрица создана:")
+
+
     def load_matrix(self):
-        filename = input("Введите имя файла для загрузки: ")
+        filename = 'matrix.txt'
         self.src_matrix = self.matrix_creator.load_matrix(filename)
         print("Матрица загружена:")
         self.print_matrix()
@@ -36,7 +45,7 @@ class Menu:
         if  self.src_matrix is None:
             print("Матрица не создана или не загружена.")
             return
-        filename = input("Введите имя файла для сохранения: ")
+        filename = 'matrix.txt'
         self.matrix_creator.save_matrix( self.src_matrix, filename)
         print(f"Матрица сохранена в файл {filename}.")
 
@@ -49,11 +58,18 @@ class Menu:
         self.matrix=copy.deepcopy(self.src_matrix)
         choice = input("Выберите алгоритм: ")
         if choice == '1':
-            start = int(input("Введите начальную вершину: "))
+            is_correct = False
+            while not is_correct:
+                start = int(input("Введите начальную вершину: "))
+                if 0 <= start < len(self.matrix):
+                    is_correct = True
+                else:
+                    print(
+                        f"Ошибка: начальная вершина должна быть в диапазоне от 0 до {len(self.matrix) - 1}. Попробуйте снова.")
             solution = ADO_MOD_algorithm(self.matrix).find_res(start)
             Visualiser().visualise_graph(self.src_matrix, solution)
         elif choice == '2':
-            start = int(input("Введите начальную вершину: "))
+            start = 1
             little_algo = LittleAlgorithm(self.matrix)
             i_index = [i for i in range(len(self.matrix))]
             j_index = [j for j in range(len(self.matrix))]
@@ -77,12 +93,14 @@ class Menu:
             if choice == '1':
                 self.create_matrix()
             elif choice == '2':
-                self.load_matrix()
+                self.create_euclidian_matrix()
             elif choice == '3':
-                self.save_matrix()
+                self.load_matrix()
             elif choice == '4':
-                self.choose_algorithm()
+                self.save_matrix()
             elif choice == '5':
+                self.choose_algorithm()
+            elif choice == '6':
                 print("Выход из программы.")
                 end=True
             else:

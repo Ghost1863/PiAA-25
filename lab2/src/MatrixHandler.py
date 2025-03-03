@@ -61,13 +61,13 @@ class MatrixHandler:
         start, end = edge
         path = []
 
-        # Ищем путь в одну сторону (от start к end)
+        # Ищем путь в одну сторону
         current = start
         while current in solution.keys():
             path.append(solution[current])
             current = solution[current]
 
-        # Ищем путь в другую сторону (от end к start)
+        # Ищем путь в другую сторону
         current = start
         path.insert(0, current)
         while current in solution.values():
@@ -90,20 +90,24 @@ class MatrixHandler:
         if restore_i-1 in i_index and restore_j-1 in j_index:
             i_for_inf = i_index.index(restore_i-1)
             j_for_inf = j_index.index(restore_j-1)
-            self.matrix[i_for_inf][j_for_inf] = math.inf  # запрещаем движение по обратному ребру
+            # запрещаем движение по обратному ребру
+            self.matrix[i_for_inf][j_for_inf] = math.inf
 
 
     def delete_row_column(self, i:int, j:int, solution:dict, i_index:list, j_index:list) -> None:
-        restore_i = i_index[i]  # находим, каким вершинам графа соответствуют эти индексы
+        # находим, каким вершинам графа соответствуют эти индексы
+        restore_i = i_index[i]
         restore_j = j_index[j]
-        solution[restore_i + 1] = restore_j + 1  # обновляем решение
+        # обновляем решение
+        solution[restore_i + 1] = restore_j + 1
         path=self.find_longest_path(solution,(restore_i+1,solution[restore_i + 1]))
         self.forbid_cycles(path,i_index,j_index)
 
         # Удаляем строку и столбец
         i_index.pop(i)
         j_index.pop(j)
-        self.matrix.pop(i)  # удаляем строку
+        # удаляем строку
+        self.matrix.pop(i)
         for row in self.matrix:
-            row.pop(j)  # удаляем столбец
-
+            # удаляем столбец
+            row.pop(j)
