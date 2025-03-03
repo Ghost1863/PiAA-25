@@ -56,18 +56,13 @@ class ADO_MOD_algorithm:
             print(row)
         print("Запущен поиск в глубину")
         self.dfs(self.ost, start, way)
-        # Удаляем дубликаты
-        unique_way =[]
-        for vertex in way:
-            if vertex not in unique_way:
-                unique_way.append(vertex)
 
         # Подсчёт стоимости рёбер
         cost = 0
-        for i in range(len(unique_way) - 1):
-            cost += self.src_matrix[unique_way[i]][unique_way[i + 1]]
-        cost += self.src_matrix[unique_way[-1]][unique_way[0]]  # Замыкаем цикл
+        for i in range(len(way) - 1):
+            cost += self.src_matrix[way[i]][way[i + 1]]
+        cost += self.src_matrix[way[-1]][way[0]]  # Замыкаем цикл
 
-        print("Полученный приближенный путь коммивояжера:", ' - '.join(str(x + 1) for x in unique_way))
+        print("Полученный приближенный путь коммивояжера:", ' - '.join(str(x + 1) for x in way))
         print("Его стоимость:", cost)
-        return [x + 1 for x in unique_way]
+        return [x + 1 for x in way]
