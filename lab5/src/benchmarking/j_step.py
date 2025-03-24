@@ -83,48 +83,46 @@ def _create_terminal_links(root) -> None:
 def Aho_Korasik() -> list[str]:
     text = input()
     pattern_input, joker, patterns, len_patt = get_pattern()
+    tree = create_trie(patterns)
+    create_suffix_links(tree)
+    _create_terminal_links(tree)
+    result = [0] * len(text)
+    node = tree
+    for index in range(len(text)):
 
-    if patterns:
-        tree = create_trie(patterns)
-        create_suffix_links(tree)
-        _create_terminal_links(tree)
-        result = [0] * len(text)
-        node = tree
-        for index in range(len(text)):
+        while node and (text[index] not in node.children.keys()):
+            node = node.suffix_link
 
-            while node and (text[index] not in node.children.keys()):
-                node = node.suffix_link
+        if node:
+            node = node.children[text[index]]
+            temp = node
 
-            if node:
-                node = node.children[text[index]]
-                temp = node
+            while temp:
+                if temp.terminate:
+                    #подстрока текста, которая соответствует подшаблону, заканчивающемуся в текущем узле.
+                    pattern = text[index - temp.deep + 1: index + 1]
+                    for j in patterns[pattern]:
+                        if (index_j := index - temp.deep - j + 1) >= 0:
+                            result[index_j] += 1
+                temp = temp.terminal_link
+        else:
+            node = tree
 
-                while temp:
-                    if temp.terminate:
-                        #подстрока текста, которая соответствует подшаблону, заканчивающемуся в текущем узле.
-                        pattern = text[index - temp.deep + 1: index + 1]
-                        for j in patterns[pattern]:
-                            if (index_j := index - temp.deep - j + 1) >= 0:
-                                result[index_j] += 1
-                    temp = temp.terminal_link
-            else:
-                node = tree
+    k = sum([len(elem) for elem in list(patterns.values())])
+    ban_symbol: str = "~"
 
-        k = sum([len(elem) for elem in list(patterns.values())])
-        ban_symbol: str = "~"
+    output = []
+    for i in range(len(result) - len_patt + 1):
+        if k == result[i]:
+            find_ban = []
+            text_patt = text[i: i + len_patt]
+            for j in range(len_patt):
+                if pattern_input[j] == joker:
+                    find_ban.append(text_patt[j])
 
-        output = []
-        for i in range(len(result) - len_patt + 1):
-            if k == result[i]:
-                find_ban = []
-                text_patt = text[i: i + len_patt]
-                for j in range(len_patt):
-                    if pattern_input[j] == joker:
-                        find_ban.append(text_patt[j])
-
-                if ban_symbol not in find_ban:
-                    output.append(str(i + 1))
-        return output
+            if ban_symbol not in find_ban:
+                output.append(str(i + 1))
+    return output
 
 def get_pattern() -> (str, str, dict, int):
     pattern = input()

@@ -8,6 +8,7 @@ class Node:
         self.parent = None
         self.children: dict[str, Node] = {}
         self.suffix_link = link
+        self.terminal_link=None
         self.terminate = 0  # Номер шаблона, если узел терминальный
         self.name = name  # Имя узла (символ или "root")
         self.deep: int = 0  # Глубина узла
@@ -28,7 +29,7 @@ def create_tree(patterns: dict) -> Node:
     root = Node()
     list_patterns = list(patterns.keys())
 
-    print(Colors.blue("=== Creating trie ==="))
+    print(Colors.blue("============ Creating trie ============"))
 
     for i in range(len(list_patterns)):
         node = root
@@ -43,9 +44,9 @@ def create_tree(patterns: dict) -> Node:
                 node.children[symbol] = temp_node
                 temp_node.parent = node
                 node = temp_node
-                print(f"{Colors.green('[+] ')}Creating and adding node:\n{temp_node}\n----------------------------")
+                print( f"{Colors.green('[+] ')}Creating and adding node:\n{temp_node}\n{Colors.yellow('----------------------------')}")
             else:
-                print(f"Already have this symbol:\n{node.children[symbol]}\n")
+                print( f"Already have this symbol:\n{node.children[symbol]}\n{Colors.yellow('----------------------------')}\n")
                 node = node.children[symbol]
 
         node.terminate = patterns[list_patterns[i]]
@@ -56,7 +57,7 @@ def create_tree(patterns: dict) -> Node:
 
 # Создание суффиксных ссылок
 def create_suffix_links(root: Node) -> None:
-    print(Colors.blue("\n=== Making Suffix Links ===\n"))
+    print(Colors.blue("\n============ Making Suffix Links ============\n"))
 
     queue = []
     for child in root.children.values():
@@ -73,7 +74,7 @@ def create_suffix_links(root: Node) -> None:
             symbol = child.name
             link = cur_node.suffix_link
 
-            print(f"\n  Processing child: '{child.name}'")
+            print(f"{Colors.yellow('----------------------------')}\nProcessing parent node: '{cur_node.name}'")
             print(f"  Current suffix link of parent '{cur_node.name}': '{link.name if link else 'None'}'")
 
             while link and (symbol not in link.children.keys()):
@@ -89,6 +90,7 @@ def create_suffix_links(root: Node) -> None:
                 print(f"  Set suffix link for node '{child.name}' -> root")
 
 def _create_terminal_links(root) -> None:
+    print(Colors.blue("\n============ Making Terminal Links ============\n"))
     queue = [x for x in root.children.values()]
     while queue:
         cur_node = queue.pop(0)
@@ -99,6 +101,7 @@ def _create_terminal_links(root) -> None:
         while temp.name != "root":
             if temp.terminate and temp != cur_node:
                 cur_node.terminal_link = temp
+                print(f"{Colors.yellow('----------------------------')}\nTerminal link for node: '{cur_node.name}' -> {temp.name}")
                 break
             temp = temp.suffix_link
 
@@ -106,68 +109,67 @@ def _create_terminal_links(root) -> None:
 def Aho_Corasick() -> list[str]:
     text = get_text()
     pattern_input, joker, patterns, len_patt = get_pattern()
+    print("Splitted patterns: ",patterns)
+    tree = create_tree(patterns)
+    create_suffix_links(tree)
+    _create_terminal_links(tree)
+    print(Colors.blue("\n=== Aho Korasik algorithm start === \n"))
+    result = [0] * len(text)
+    node = tree
+    for index in range(len(text)):
+        colored_text = f'{Colors.yellow("------------------------")}\n' + text[:index] + Colors.red(text[index]) + text[index + 1:]
+        print(colored_text)
 
-    if patterns:
-        tree = create_tree(patterns)
-        create_suffix_links(tree)
-        _create_terminal_links(tree)
-        print(Colors.blue("\n=== Aho Korasik algorithm start === \n"))
+        while node and (text[index] not in node.children.keys()):
+            node = node.suffix_link
 
-        result = [0] * len(text)
-        node = tree
-        for index in range(len(text)):
-            colored_text = text[:index] + Colors.red(text[index]) + text[index + 1:]
-            print(colored_text)
-            print(f"Current symbol '{text[index]}'\n")
+        if node:
+            node = node.children[text[index]]
+            print(f"Symbol {Colors.red(node.name)} was found in child node:\n{node}\n")
+            temp = node
 
-            while node and (text[index] not in node.children.keys()):
-                node = node.suffix_link
+            while temp:
+                if temp.terminate:
+                    #Вырезает из текста подстроку, соответствующую найденному шаблону.
+                    pattern = text[index - temp.deep + 1: index + 1]
+                    print(f"Get terminate value for \"{pattern}\" at index = {index - temp.deep + 2}. Pattern number is {temp.terminate}.\n")
+                    #j — позиция подшаблона в исходном шаблоне.
+                    for j in patterns[pattern]:
+                        #Вычисляет, где начался исходный шаблон в тексте, и увеличивает счётчик вхождений.
+                        if (index_j := index - temp.deep - j + 1) >= 0:
+                            result[index_j] += 1
+                temp = temp.terminal_link
+        else:
+            node = tree
 
-            if node:
-                node = node.children[text[index]]
-                print(f"Symbol was found in child node:\n{node}\n")
-                temp = node
+    k = sum([len(elem) for elem in list(patterns.values())])
+    print(f"Get result C[i]:\n{result[:len(result) - len_patt + 1]}\n")
 
-                while temp:
-                    if temp.terminate:
-                        pattern = text[index - temp.deep + 1: index + 1]
-                        print(
-                            f"Get terminate value for \"{pattern}\" at index = {index - temp.deep + 2}. Pattern number is {temp.terminate}.\n")
-                        for j in patterns[pattern]:
-                            if (index_j := index - temp.deep - j + 1) >= 0:
-                                result[index_j] += 1
-                    temp = temp.suffix_link
-            else:
-                node = tree
+    ban_symbol: str = input(Colors.cyan("Input banned symbol: "))
+    if len(ban_symbol) != 1:
+        raise ValueError("Invalid ban symbol!")
 
-        k = sum([len(elem) for elem in list(patterns.values())])
-        print(f"Get result C[i]:\n{result[:len(result) - len_patt + 1]}\n")
+    print(f"\nCount of patterns = {k}.\nTrying to find joker_pattern in the result list (C[i]).\n")
 
-        ban_symbol: str = input("Input banned symbol: ")
-        if len(ban_symbol) != 1:
-            raise ValueError("Invalid ban symbol!")
+    output = []
+    for i in range(len(result) - len_patt + 1):
+        if k == result[i]:
+            find_ban = []
+            text_patt = text[i: i + len_patt]
+            for j in range(len_patt):
+                if pattern_input[j] == joker:
+                    find_ban.append(text_patt[j])
 
-        print(f"\nCount of patterns = {k}.\nTry to find joker_pattern in the result list (C[i]).\n")
-
-        output = []
-        for i in range(len(result) - len_patt + 1):
-            if k == result[i]:
-                find_ban = []
-                text_patt = text[i: i + len_patt]
-                for j in range(len_patt):
-                    if pattern_input[j] == joker:
-                        find_ban.append(text_patt[j])
-
-                if ban_symbol not in find_ban:
-                    output.append(str(i + 1))
-        return output
+            if ban_symbol not in find_ban:
+                output.append(str(i + 1))
+    return output
 
 def get_text() -> str:
-    return input("Enter text: ")
+    return input(Colors.cyan("Enter text: "))
 
 def get_pattern() -> (str, str, dict, int):
-    pattern = input("Enter pattern: ")
-    joker = input("Enter joker symbol: ")
+    pattern = input(Colors.cyan("Enter pattern: "))
+    joker = input(Colors.cyan("Enter joker symbol: "))
     patterns = get_sub_patterns(pattern, joker)
     return pattern, joker, patterns, len(pattern)
 

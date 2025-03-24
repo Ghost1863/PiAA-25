@@ -32,7 +32,7 @@ class Trie:
 
     # Создание дерева
     def _create_trie(self):
-        print(Colors.blue("=== Creating trie ==="))
+        print(Colors.blue("============ Creating trie ============"))
         list_patterns = list(self.patterns.keys())
 
         for pattern in list_patterns:
@@ -47,9 +47,9 @@ class Trie:
                     node.children[symbol] = temp_node
                     temp_node.parent = node
                     node = temp_node
-                    print(f"{Colors.green('[+] ')}Creating and adding node:\n{temp_node}\n----------------------------")
+                    print(f"{Colors.green('[+] ')}Creating and adding node:\n{temp_node}\n{Colors.yellow('----------------------------')}")
                 else:
-                    print(f"Already have this symbol:\n{node.children[symbol]}\n")
+                    print(f"Already have this symbol:\n{node.children[symbol]}\n{Colors.yellow('----------------------------')}\n")
                     node = node.children[symbol]
 
             # Устанавливаем terminate для последнего символа шаблона
@@ -80,14 +80,14 @@ class Trie:
 
         while queue:
             cur_node = queue.pop(0)
-            print(f"\nProcessing parent node: '{cur_node.name}'")
+            print(f"{Colors.yellow('----------------------------')}\nProcessing parent node: '{cur_node.name}'")
             for child in cur_node.children.values():
                 queue.append(child)
                 self._create_suffix_link_for_node(child)
 
 
     def _create_terminal_links(self):
-        print(Colors.blue("\n=== Making Terminal Links ===\n"))
+        print(Colors.blue("\n============ Making Terminal Links ============\n"))
         queue = [x for x in self.root.children.values()]
 
         while queue:
@@ -105,12 +105,12 @@ class Trie:
 
 
     def Aho_Corasick(self, text: str) -> list[str]:
-        print(Colors.blue("\n=== Aho Korasik algorithm start === \n"))
+        print(Colors.blue("\n============ Aho Corasick algorithm start ============ \n"))
         result = []
         node = self.root
 
         for index in range(len(text)):
-            colored_text = text[:index] + Colors.red(text[index]) + text[index+1:]
+            colored_text = f'{Colors.yellow("------------------------")}\n'+text[:index] + Colors.red(text[index]) + text[index+1:]
             print(colored_text)
 
             while node and (text[index] not in node.children.keys()):
@@ -118,7 +118,7 @@ class Trie:
 
             if node:
                 node = node.children[text[index]]
-                print(f"Symbol was found in child node:\n{node}\n")
+                print(f"Symbol {Colors.red(node.name)} was found in child node:\n{node}\n")
                 temp = node
 
                 while temp:
@@ -138,14 +138,14 @@ class Trie:
         return result
 
 def get_text() -> str:
-    return input("Enter text ")
+    return input(Colors.cyan("Enter text "))
 
 def get_patterns() -> dict:
-    n = int(input("Enter amount of patterns "))
+    n = int(input(Colors.cyan("Enter amount of patterns ")))
     patterns: dict = {}
 
     for pattern_n in range(n):
-        pattern = input("Enter pattern ")
+        pattern = input(Colors.cyan("Enter pattern "))
         patterns[pattern] = pattern_n + 1
     return patterns
 
