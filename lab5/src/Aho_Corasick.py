@@ -30,7 +30,6 @@ class Trie:
         self._create_suffix_links()
         self._create_terminal_links()
 
-    # Создание дерева
     def _create_trie(self):
         print(Colors.blue("============ Creating trie ============"))
         list_patterns = list(self.patterns.keys())
@@ -56,7 +55,6 @@ class Trie:
             node.terminate = self.patterns[pattern]
             print(f"Adding terminate for last node:\n{node.name}\n")
 
-    # Создание суффиксных ссылок
     def _create_suffix_link_for_node(self, node):
         if node == self.root:
             return
@@ -84,7 +82,6 @@ class Trie:
             for child in cur_node.children.values():
                 queue.append(child)
                 self._create_suffix_link_for_node(child)
-
 
     def _create_terminal_links(self):
         print(Colors.blue("\n============ Making Terminal Links ============\n"))

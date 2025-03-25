@@ -39,7 +39,6 @@ std::vector<int> prefixFunction(const std::string& pattern) {
             j++;
             std::cout << "    Увеличиваем j до " << j << std::endl;
         }
-
         prefixes[i] = j;
         std::cout << "  Устанавливаем prefixes[" << i << "] = " << prefixes[i] << std::endl;
 
