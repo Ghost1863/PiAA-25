@@ -194,8 +194,6 @@ def get_sub_patterns(pattern: str, joker: str) -> dict[str, list[int]]:
 
     return patterns
 
-
-# Основная функция
 def main():
     result = Aho_Corasick()
     if result:
